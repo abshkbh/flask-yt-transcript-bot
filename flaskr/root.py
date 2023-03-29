@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request, abort, current_app
-from flaskr.transcriber import Transcriber
+from flaskr.__init__ import TRANSCRIBER
 
 bp = Blueprint('root', __name__, url_prefix='/')
 
