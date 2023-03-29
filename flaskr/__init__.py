@@ -6,9 +6,6 @@ from pathlib import Path
 from flaskr import transcriber
 from flaskr import llm_store
 
-TRANSCRIBER = transcriber.Transcriber()
-LLM_STORE = llm_store.LLMStore()
-
 
 def create_app():
     """
@@ -28,8 +25,13 @@ def create_app():
     # Creates the directory that will house the transcripts and LLM indices for each transcript.
     data_dir = Path(app.config['DATA_DIRECTORY_PATH'])
     data_dir.mkdir(parents=True, exist_ok=True)
-    TRANSCRIBER.set_data_path(data_dir)
-    LLM_STORE.set_data_path(data_dir)
+    print(f'Data dir={data_dir}')
+
+    # Cache the objects in the app.
+    transcriber_object = transcriber.Transcriber(data_dir)
+    app.config['TRANSCRIBER'] = transcriber_object
+    llm_store_object = llm_store.LLMStore(data_dir)
+    app.config['LLM_STORE'] = llm_store_object
 
     # To support cross-origin requests. This will handle the headers required.
     CORS(app)

@@ -14,14 +14,11 @@ class LLMStore():
     Stores the LLM model i.e. "index" on the filesystem.
     """
 
-    def __init__(self):
-        self.__data_dir = None
-
-    # TODO: Find a way to pass this in the constructor.
-    def set_data_path(self, data_dir: Path):
+    def __init__(self, data_dir: Path):
         self.__data_dir = data_dir
 
     def get_model(self, video_id: str) -> GPTSimpleVectorIndex:
+        print(f'get_model called for {self.__data_dir} {video_id}')
         llm_index_path = self.__data_dir / f'{video_id}' / 'index.json'
         # Create a model if it isn't created and cached.
         if not llm_index_path.is_file():
