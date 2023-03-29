@@ -7,7 +7,11 @@ class Transcriber():
     Transcribes a video and stores it on the local file system.
     """
 
-    def __init__(self, data_dir: Path):
+    def __init__(self):
+        self.__data_dir = None
+
+    # TODO: Find a way to pass this in the constructor.
+    def set_data_path(self, data_dir: Path):
         self.__data_dir = data_dir
 
     def get_and_store_transcript(self, video_id: str):

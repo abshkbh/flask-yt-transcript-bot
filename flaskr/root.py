@@ -1,8 +1,7 @@
 from flask import Blueprint, jsonify, request, abort, current_app
-from transcriber import Transcriber
+from flaskr.transcriber import Transcriber
 
 bp = Blueprint('root', __name__, url_prefix='/')
-TRANSCRIBER = Transcriber(current_app.config['DATA_DIRECTORY_PATH'])
 
 
 @bp.route('/', methods=['GET'])

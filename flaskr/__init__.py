@@ -3,6 +3,9 @@ from flask_cors import CORS
 from flaskr.error import bad_request
 from flaskr import root
 from pathlib import Path
+from flaskr import transcriber
+
+TRANSCRIBER = transcriber.Transcriber()
 
 
 def create_app():
@@ -23,6 +26,7 @@ def create_app():
     # Creates the directory that will house the transcripts and LLM indices for each transcript.
     data_dir = Path(app.config['DATA_DIRECTORY_PATH'])
     data_dir.mkdir(parents=True, exist_ok=True)
+    TRANSCRIBER.set_data_path(data_dir)
 
     # To support cross-origin requests. This will handle the headers required.
     CORS(app)
