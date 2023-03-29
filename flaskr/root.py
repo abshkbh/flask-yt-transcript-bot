@@ -1,6 +1,8 @@
-from flask import Blueprint, jsonify, request, abort
+from flask import Blueprint, jsonify, request, abort, current_app
+from transcriber import Transcriber
 
 bp = Blueprint('root', __name__, url_prefix='/')
+TRANSCRIBER = Transcriber(current_app.config['DATA_DIRECTORY_PATH'])
 
 
 @bp.route('/', methods=['GET'])
@@ -19,5 +21,7 @@ def create_bot():
     video_id = request_json.get('video_id')
     if not video_id:
         abort(400, {'error': 'video id not provided'})
+
+    TRANSCRIBER.get_and_store_transcript(video_id)
 
     return jsonify()
