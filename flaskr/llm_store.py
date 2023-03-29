@@ -23,8 +23,9 @@ class LLMStore():
 
     def get_model(self, video_id: str) -> GPTSimpleVectorIndex:
         llm_index_path = self.__data_dir / f'{video_id}' / 'index.json'
+        # Create a model if it isn't created and cached.
         if not llm_index_path.is_file():
-            raise FileNotFoundError(f'model not found for {video_id}')
+            return self.create_model(video_id)
         print(f'Loading model for {video_id} from disk')
         return GPTSimpleVectorIndex.load_from_disk(llm_index_path)
 
