@@ -5,6 +5,7 @@ from flaskr import root
 from pathlib import Path
 from flaskr import transcriber
 from flaskr import llm_store
+from flaskr import app_constants
 
 
 def create_app():
@@ -28,10 +29,9 @@ def create_app():
     print(f'Data dir={data_dir}')
 
     # Cache the objects in the app.
-    transcriber_object = transcriber.Transcriber(data_dir)
-    app.config['TRANSCRIBER'] = transcriber_object
-    llm_store_object = llm_store.LLMStore(data_dir)
-    app.config['LLM_STORE'] = llm_store_object
+    app.config[app_constants.TRANSCRIBER_KEY] = transcriber.Transcriber(
+        data_dir)
+    app.config[app_constants.LLM_STORE_KEY] = llm_store.LLMStore(data_dir)
 
     # To support cross-origin requests. This will handle the headers required.
     CORS(app)

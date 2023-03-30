@@ -1,7 +1,5 @@
 from flask import Blueprint, jsonify, request, abort, current_app
-from flaskr.__init__ import TRANSCRIBER
-from flaskr.__init__ import LLM_STORE
-
+from flaskr import app_constants
 
 bp = Blueprint('root', __name__, url_prefix='/')
 
@@ -23,8 +21,10 @@ def create_bot():
     if not video_id:
         abort(400, {'error': 'video id not provided'})
 
-    TRANSCRIBER.get_and_store_transcript(video_id)
-    LLM_STORE.create_model(video_id)
+    transcriber = current_app.config[app_constants.TRANSCRIBER_KEY]
+    transcriber.get_and_store_transcript(video_id)
+    llm_store = current_app.config[app_constants.LLM_STORE_KEY]
+    llm_store.create_model(video_id)
 
     return jsonify()
 
@@ -44,8 +44,9 @@ def ask_bot():
     if not query:
         abort(400, {'error': 'query is not provided'})
 
-    llm_index = LLM_STORE.get_model(video_id)
+    llm_store = current_app.config[app_constants.LLM_STORE_KEY]
+    llm_index = llm_store.get_model(video_id)
     response = llm_index.query(query)
     print(f'{video_id} Query: {query} Response: {response}')
 
-    return jsonify({'response': response})
+    return jsonify({'response': str(response)})
