@@ -21,11 +21,15 @@ def create_bot():
     if not video_id:
         abort(400, {'error': 'video id not provided'})
 
-    transcriber = current_app.config[app_constants.TRANSCRIBER_KEY]
-    transcriber.get_and_store_transcript(video_id)
     llm_store = current_app.config[app_constants.LLM_STORE_KEY]
-    llm_store.create_model(video_id)
-
+    try:
+        llm_store.get_model(video_id)
+    except FileNotFoundError as _:
+        print(f'Creating new model for {video_id}')
+        # First transcribe the video and then create the model.
+        transcriber = current_app.config[app_constants.TRANSCRIBER_KEY]
+        transcriber.get_and_store_transcript(video_id)
+        llm_store.create_model(video_id)
     return jsonify()
 
 
@@ -45,8 +49,11 @@ def ask_bot():
         abort(400, {'error': 'query is not provided'})
 
     llm_store = current_app.config[app_constants.LLM_STORE_KEY]
-    llm_index = llm_store.get_model(video_id)
+    try:
+        llm_index = llm_store.get_model(video_id)
+    except FileNotFoundError as exception:
+        abort(400, {'error': f'{exception}'})
+
     response = llm_index.query(query)
     print(f'{video_id} Query: {query} Response: {response}')
-
     return jsonify({'response': str(response)})
